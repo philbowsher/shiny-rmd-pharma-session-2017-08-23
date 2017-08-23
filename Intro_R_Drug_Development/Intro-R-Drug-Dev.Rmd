@@ -1,0 +1,919 @@
+---
+title: "Intro to Shiny, R Markdown, HTML Widgets, APIs - Application in Drug Development"
+author: "Phil Bowsher"
+date: "Wed, Aug 22nd, 2017"
+output: 
+  ioslides_presentation:
+    css: shiny-slides.css
+    logo: images/shiny-logo.png
+    self_contained: no
+    incremental: true
+runtime: shiny
+---
+
+<style type="text/css">
+
+slides > slide:before {
+  font-size: 12pt;
+  content: 'http://shiny.rstudio.com/';
+  position: absolute;
+  text-align: center;
+  bottom: 15px;
+  left: 50%;  
+  margin-left: -300px;
+  width: 600px;
+  line-height: 1.9;
+}
+
+div.img-col{
+  text-align: center;
+  font-size: 14pt;
+}
+
+a {
+  border-bottom: none !important;
+}
+
+.wrapper {
+  margin: 70px auto;
+  position: relative;
+  z-index: 90;
+}
+
+.ribbon-wrapper-green {
+  width: 145px;
+  height: 148px;
+  overflow: hidden;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+}
+
+.ribbon-green {
+  font: bold 15px Sans-Serif;
+  color: #333;
+  text-align: center;
+  text-shadow: rgba(255,255,255,0.5) 0px 1px 0px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform:    rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:      rotate(45deg);
+  position: relative;
+  padding: 7px 0;
+  left: -25px;
+  top: 45px;
+  width: 220px;
+  background-color: #7ADCBF;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#8AACDF), to(#658FBE)); 
+  background-image: -webkit-linear-gradient(top, #8AACDF, #658FBE); 
+  background-image:    -moz-linear-gradient(top, #8AACDF, #658FBE); 
+  background-image:     -ms-linear-gradient(top, #8AACDF, #658FBE); 
+  background-image:      -o-linear-gradient(top, #8AACDF, #658FBE); 
+  color: #6a6340;
+  -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.3);
+  -moz-box-shadow:    0px 0px 3px rgba(0,0,0,0.3);
+  box-shadow:         0px 0px 3px rgba(0,0,0,0.3);
+}
+
+.ribbon-green:before, .ribbon-green:after {
+  content: "";
+  border-top:   3px solid #00896e;   
+  border-left:  3px solid transparent;
+  border-right: 3px solid transparent;
+  position:absolute;
+  bottom: -3px;
+}
+
+.ribbon-green:before {
+  left: 0;
+}
+.ribbon-green:after {
+  right: 0;
+}
+</style>
+
+# Overview
+
+## Workshop Goals - Workshop has 5 Parts
+
+### Part 1-4 - You will learn:
+
+- An Overview of Shiny, R Markdown & HTML Widgets
+- How to add HTML Widgets to shiny Apps & R Markdown Reports
+- An Introduction to Reporting in shiny Apps & R Markdown Reports
+- Intro to APIs
+
+### Part 5 - You will learn:
+
+- About Live shiny Apps & R Analysis Used in Drug Development
+- How Others are Using R in Pharma
+
+## Outline
+
+### We'll Cover Four Main Areas:
+<div class="columns-2">
+- Shiny
+- R Markdown
+- HTML Widgets
+- APIs
+
+<div class="img-col">
+![](pk2.png)
+   
+ </div>
+</div>
+
+## My Story & How I Got Here
+### About:
+ - CS Background
+ - B2S Life Sciences
+ - Book Note - Statistical Methods for Immunogenicity Assessment
+ 
+## Freedom to Build...
+
+- “This is your world...You’re the creator...Find freedom on this canvas...Believe, that you can do it, ‘Cuz you can do it. You can do it.” 
+― Bob Ross"
+
+## Most Common Question...
+
+### Clinical Research
+  - [Using R in a regulatory environment: FDA experiences](https://channel9.msdn.com/Events/useR-international-R-User-conference/useR2016/Using-R-in-a-regulatory-environment-FDA-experiences)
+  - [LRT Signal Analysis for a Drug](https://openfda.shinyapps.io/LRTest/)
+  - [Unfulfilled? Potential of R in Clinical Research](https://berlinrug.github.io/BerlinRUG/20151029/unfulfilled-potential-of-r-in-clinical-research/Parsadanyan_R%20in%20Clinical%20Research_fixed.pdf)
+ - [R Shiny Clinical Review Tools on the Horizon](https://pharmasug.org/proceedings/2017/AD/PharmaSUG-2017-AD14.html#/)
+ - [Empowering Users By Creating Data Visualization Applications In R/Shiny](http://www.phusewiki.org/docs/2017_SDES_FosterCity_Presentations/Data%20Visualization%20Applications%20Using%20R:Shiny.pdf)
+ - [Developing Standardized Clinical Review Tools Using Shiny In R](http://www.phusewiki.org/docs/2017_CSS_US/PP34_Final.pdf)
+ - [How R is used by the FDA for regulatory compliance](http://blog.revolutionanalytics.com/2017/06/r-fda.html)
+
+# Part 1 - Shiny
+
+## Shiny Motivation
+
+<div class="columns-2">
+ - Analysis must be communicated
+ - Data scientists are modern diviners
+ - We sit between the tools and users
+ - Deliver static reports
+ - Impoverished perspective into analysis
+
+ <div class="img-col">
+   ![](wizard.jpg)
+   
+   <div>Altered CC image courtesy <br /> of <a href="https://www.flickr.com/photos/mcgraths/">mcgraths</a> on flickr</div>
+ </div>
+</div>
+
+## Live Shiny Pharma Examples
+
+<div class="columns-2">
+- [Build your PK model by Marc Lavielle using the mlxR package at http://simulx.webpopix.org/ ](http://shiny.webpopix.org/dashboard/pkmodel/) & [here](http://webpopix.org/shiny/ShinyExamples.html)
+- [medplot by Crt Ahlin & Lara Lusa to  facilitate the exploration and analysis of longitudinal data](http://shiny.mf.uni-lj.si/medplot/)
+- [Bioequivalence v0.3 by Andrey Ogurtsov](https://statist.shinyapps.io/bioeq_en/)
+
+<div class="img-col">
+![](pk.png)
+   
+ </div>
+</div>
+
+## Shiny
+### About:
+ - Interactive web application framework for R
+ - Create and share applications with others
+ - Expects no knowledge of web technologies like HTML, CSS, or JavaScript (but you can leverage them, if you know them)
+
+### Benefits & Features:
+ - Accessible to non-programmers
+ - Great for exploratory data analysis, visualizations & dashboards
+ - Utilize existing R code
+ 
+## Using Shiny - How to Build a shiny App & Installation & Structure
+ - A shiny app consists of two parts: a user interface (UI) and a server
+ - Install Package - Shiny - install.packages("shiny")
+ - Load Library - Shiny - library(shiny)
+ - ui.R - User Interface
+ - server.R  - Server Function
+ - File Template - runExample("01_hello")
+ - [Shiny Cheat Sheet](http://shiny.rstudio.com/articles/cheatsheet.html)
+- [Enhance with Shiny functions and R code](http://shiny.rstudio.com/reference/shiny/latest/)
+- [Enhance with Shiny Widgets](http://shiny.rstudio.com/gallery/widget-gallery.html)
+
+## Intro Process
+ - https://github.com/rstudio/shiny-examples/
+ - http://shiny.rstudio.com/gallery/single-file-shiny-app.html
+ - Panels
+ - ToothGrowth
+ - http://shiny.rstudio.com/gallery/basic-datatable.html
+ - http://shiny.rstudio.com/gallery/reactivity.html
+
+## Example shiny App &mdash; `ui.R`
+
+```r
+library(datasets)
+library(DT)
+
+fluidPage(
+  titlePanel("Basic DataTable for ToothGrowth"),
+  
+  # Create a new Row in the UI for selectInputs
+  fluidRow(
+    column(4,
+           selectInput("supp",
+                       "Supplement:",
+                       c("All",
+                         unique(as.character(ToothGrowth$supp))))
+    )
+    )
+  ,
+  # Create a new row for the table.
+  fluidRow(
+    DT::dataTableOutput("table")
+  )
+)
+```
+
+```{r, echo=FALSE, results="hide"}
+library(datasets)
+head(iris, n=2)
+```
+
+
+## Example shiny App &mdash; `server.R`
+
+```r
+library(datasets)
+
+function(input, output) {
+  
+  # Filter data based on selections
+  output$table <- DT::renderDataTable(DT::datatable({
+    data <- ToothGrowth
+    if (input$supp != "All") {
+      data <- data[data$supp == input$supp,]
+    }
+    data
+  }))
+  
+}
+```
+
+## Shiny Development Example - 1_Shiny_ToothGrowth_Basic
+
+- Go [here](http://shiny.rstudio.com/gallery/basic-datatable.html)
+- Create a new multi file shiny app in the IDE by going to 'File' and select 'New File' and select 'Shiny Web App...' and create a new multiple file app and title it 'clustering'
+- Copy over the ui.R and app.R files with the code found [here:](https://github.com/rstudio/shiny-examples/tree/master/030-basic-datatable)
+- Click 'Run App' in the IDE when done
+
+## Shiny Example - Interactive Plot ToothGrowth 2_Shiny_Basic_Plots
+```{r, echo=FALSE}
+library(ggplot2)
+library(Cairo)   # For nicer ggplot2 output when deployed on Linux
+library(datasets)
+
+dataset <- ToothGrowth
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(width = 6,
+           plotOutput("plot1", height = 350,
+                      click = "plot1_click",
+                      brush = brushOpts(
+                        id = "plot1_brush"
+                      )
+           ),
+           actionButton("exclude_toggle", "Toggle points"),
+           actionButton("exclude_reset", "Reset")
+    )
+  )
+)
+
+server <- function(input, output) {
+  # For storing which rows have been excluded
+  vals <- reactiveValues(
+    keeprows = rep(TRUE, nrow( dataset))
+  )
+  
+  output$plot1 <- renderPlot({
+    # Plot the kept and excluded points as two separate data sets
+    keep    <-  dataset[ vals$keeprows, , drop = FALSE]
+    exclude <-  dataset[!vals$keeprows, , drop = FALSE]
+    
+    ggplot(keep, aes(dose, len)) + geom_point() +
+      geom_smooth(method = lm, fullrange = TRUE, color = "black") +
+      geom_point(data = exclude, shape = 21, fill = NA, color = "black", alpha = 0.25) +
+      coord_cartesian(xlim = c(0.5, 2.0), ylim = c(5,35))
+  })
+  
+  # Toggle points that are clicked
+  observeEvent(input$plot1_click, {
+    res <- nearPoints( dataset, input$plot1_click, allRows = TRUE)
+    
+    vals$keeprows <- xor(vals$keeprows, res$selected_)
+  })
+  
+  # Toggle points that are brushed, when button is clicked
+  observeEvent(input$exclude_toggle, {
+    res <- brushedPoints( dataset, input$plot1_brush, allRows = TRUE)
+    
+    vals$keeprows <- xor(vals$keeprows, res$selected_)
+  })
+  
+  # Reset all points
+  observeEvent(input$exclude_reset, {
+    vals$keeprows <- rep(TRUE, nrow( dataset))
+  })
+  
+}
+
+shinyApp(ui, server)
+```
+
+## Shiny Development Example - 3_Shiny_ToothGrowth_Plots
+
+<div class="columns-2">
+- [Example 1](http://shiny.rstudio.com/gallery/plot-interaction-exclude.html)
+- [Example 2](http://shiny.rstudio.com/gallery/plot-plus-three-columns.html)
+
+
+
+</div>
+
+## You Need a Dashboard!
+
+<div class="columns-4">![dogbert](dogbert.png)</a>
+
+</div>
+
+# Part 2 - shinydashboard
+
+## Shiny Development Example - 4_Shiny_shinydashboard_basic
+
+<div class="columns-2">
+- [Pharmacometrics: some Shiny applications](http://webpopix.org/shiny/ShinyExamples.html)
+- [CDC PrEP Guidelines ](https://prism.shinyapps.io/cdc-prep-guidelines/)
+- [CDC Zika Data](https://chendaniely.shinyapps.io/zika_cdc_dashboard/)
+- [shinydashboard](https://rstudio.github.io/shinydashboard/)
+- 4_Shiny_shinydashboard_basic
+
+</div>
+
+## Shiny Development Example - 4_Shiny_Immunogenicity_3Tier
+
+<div class="columns-2">
+- shinydashboard
+- ADA three‐tiered testing strategy is deployed to assess ADA on sample data.
+- [Example](https://beta.rstudioconnect.com/content/2769/)
+
+
+</div>
+
+## Shiny Development Example - 4_Shiny_Immunogenicity_htmlTemplate
+
+<div class="columns-2">
+- Simple Immunogenicity report via Shiny html template
+- [HTML Templates](http://shiny.rstudio.com/articles/templates.html)
+- [Developing and deploying large scale Shiny applications ](https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Developing-and-deploying-large-scale-Shiny-applications-for-non-life-insurance)
+- [Example](https://beta.rstudioconnect.com/content/2771/)
+
+</div>
+
+## shiny Package & Shiny Server
+
+<table width="100%" style="border-spacing: 50px; border-collapse: separate; margin: -50px auto;">
+<tr>
+<td style="vertical-align: top; padding-top: 1em">
+### shiny Package
+Shiny is an open source R package that provides a web framework for building interactive web applications using R.
+</td>
+<td><img src="shiny.png" width="200" /></td>
+</tr><tr>
+<td style="vertical-align: top; padding-top: 1em">
+### Shiny Server
+Shiny Server is a server program that lets you host and manage shiny web applications and interactive documents online.
+</td>
+<td><img src="pk3.png" width="200" /></td>
+</tr>
+</table>
+  
+## Shiny Examples - Try One During Our Break
+
+- https://diabetescheck.shinyapps.io/openfda-dashboard/
+- [Shiny Gadgets](https://github.com/philbowsher/RStudio-Addins-Shiny-Gadgets)
+
+</div>
+
+## Hopefully Not in this room...
+
+<div class="columns-4">![mouse](mouse.png)</a>
+
+</div>
+
+# Part 2 R Markdown
+
+## Reproducibility
+
+- https://www.nih.gov/research-training/rigor-reproducibility/principles-guidelines-reporting-preclinical-research
+- http://journals.plos.org/plosbiology/article?id=10.1371%2Fjournal.pbio.1002165
+- https://ropensci.org/blog/2014/06/09/reproducibility/
+- https://www.r-statistics.com/2016/07/the-reproducibility-crisis-in-science-and-prospects-for-r/
+- http://biorxiv.org/content/early/2016/07/29/066803
+- https://github.com/statwonk/openfda-dashboard
+- https://github.com/crtahlin/medplot
+- https://beta.rstudioconnect.com/content/2715/Up-to-Bat-with-Packrat.html
+
+</div>
+
+## Packrat - Info
+
+<div class="columns-2">
+- https://rstudio.github.io/packrat/
+- https://github.com/philbowsher/Up-to-Bat-with-Packrat
+- Packrat is an R package that implements a dependency management system for R.
+- Packrat creates a special kind of directory - a private package library for a given R project or directory.
+
+</div>
+
+## Docker - Info
+
+<div class="columns-2">
+- https://github.com/philbowsher/Boston-Rocker
+
+</div>
+
+## Live R Markdown Pharma Examples
+
+<div class="columns-2">
+- [Cancer prediction using caret by JESUS M. CASTAGNETTO
+ ](https://rpubs.com/jesuscastagnetto/caret-knn-cancer-prediction)
+- [TCGA prostate cancer differential expression by race
+by Levi Waldron
+](https://rpubs.com/lwaldron/TCGA_prad)
+- [GLMM with various R packages
+by Kazuki Yoshida
+](https://rpubs.com/kaz_yos/glmm1)
+- [A not so short review on 
+survival analysis in R](http://rpubs.com/alecri/258589)
+- [Access to Hospital Care Dashboard](http://colorado.rstudio.com/rsc/content/154/)
+- [Comparative Protein Structure Analysis with Bio3D](http://rpubs.com/xqyao/bio3d_pca)
+- [Survival Analysis Example](https://rpubs.com/mjeagle/Surv)
+
+<div class="img-col">![Rmarkdownpackage](Rmarkdownpackage.png)
+ </div>
+
+</div>
+
+## R Markdown - Benefits & Features
+
+<div class="columns-2">
+ - Markdown is a particular type of markup language.
+ - Markup languages are designed produce documents from plain text.
+ - Existing R code can be used within R Markdown & reports can be parameterized
+ - Easy creation of dynamic documents, presentations, and reports
+ - Framework for writing reproducible reports from R
+ 
+<div class="img-col">
+   ![rmarkdown](Rmarkdown1.png)
+ </div>
+</div>
+
+## Using R Markdown - How to Build a Document - Installation & Structure
+
+ - Comes installed with the RStudio IDE
+ - File Template - within RStudio
+ - ["Add R code - Code Chunks"](http://rmarkdown.rstudio.com/authoring_rcodechunks.html) 
+ - 
+ - ["R Markdown Cheat Sheet"](http://shiny.rstudio.com/articles/rm-cheatsheet.html) 
+ - Enhance with Shiny functions and R code
+ - Utilize Chunk Options - echo=FALSE, results="hide", include=FALSE, warning=FALSE & message=FALSE 
+ - Global chunk options
+ 
+## Example R Markdown Doc -- `Example.RMD`
+
+- Create a new R Markdown document in the IDE by going to 'File' and select 'New File' and select 'R Markdown...' and create a new document and leave output as HTML
+<div class="columns-4">![Rmarkdown2](Rmarkdown2.png)</a> </div>
+
+- Then select Knit and save it as Example.RMD </td>
+<td><img src="Rmarkdown3.png" width="200" /></td>
+</tr>
+</table>
+
+## OpenFDA Analysis - R Markdown Report Demo - pharmarmd.Rmd
+
+<div class="columns-2">
+- [ropenhealth/openfda](https://github.com/rOpenHealth/openfda)
+- [openFDA API endpoint for adverse drug events](https://open.fda.gov/drug/event/)
+- [openfda-dashboard information](https://github.com/statwonk/openfda-dashboard/blob/master/about2.Rmd)
+- [openFDA reference guide](https://open.fda.gov/drug/event/reference/)
+- [Ten things to know about drug adverse events](https://open.fda.gov/update/ten-things-to-know-about-adverse-events/)
+
+<div class="img-col">
+<a href="https://open.fda.gov/update/drilling-into-the-details/">![fda](fda.png)</a>
+
+
+</div>
+
+</div>
+
+# Part 2.5 - Combining Shiny & R Markdown
+
+## Intro to RMD - flexdashboard - Publish Data Visualizations as a Dashboard
+
+<div class="columns-2">
+- [flexdashboard](http://rmarkdown.rstudio.com/flexdashboard/)
+- [Gene Expression Biclustering - Bryan Lewis](https://jjallaire.shinyapps.io/shiny-biclust/)
+- [Iris K-Means Clustering](https://jjallaire.shinyapps.io/shiny-kmeans/)
+
+<div class="img-col">
+<a href="https://jjallaire.shinyapps.io/shiny-biclust/">![rmarkdown3](flex.png)</a>
+
+</div>
+
+## Interactive-Reporting-Dashboards-in-Shiny
+
+- [Interactive-Reporting-Dashboards-in-Shiny](https://github.com/philbowsher/Interactive-Reporting-Dashboards-in-Shiny)
+- [Interactive plots](http://shiny.rstudio.com/gallery/)
+- [1_Shiny_Basic_Plots](http://shiny.rstudio.com/gallery/plot-interaction-exclude.html)
+
+## flexdashboard Examples
+
+<div class="columns-2">
+- 2_RMD_Flex_RMD_To_Shiny_Intro
+- 3_RMD_Flex_ToothGrowth
+- 4_RMD_Flex_Shiny_ToothGrowth
+
+</div>
+
+## Shiny/R Markdown Examples
+
+<div class="columns-2">
+- [FDA Adverse (Drug) Event Dashboard](https://github.com/statwonk/openfda-dashboard)
+- [interAdapt - An Interactive Planner for Group Sequential, Adaptive Enrichment Designs](https://michaelrosenblum.shinyapps.io/interAdapt/)
+- [Export a report from Shiny - Simple Example](http://shiny.rstudio.com/gallery/download-knitr-reports.html)
+ - [AplusB: A + B design investigator for phase I dose-escalation studies](https://graham-wheeler.shinyapps.io/AplusB/)
+
+<div class="img-col">
+   ![rmarkdown](rmddownload.png)
+ </div>
+</div>
+
+</div>
+
+## R Markdown Document - Interactivity Using Shiny
+
+ - R Markdown - leveraging Shiny
+ - Using the Shiny `renderPlot` function to make a plot interactive
+ - `selectInput` & `sliderInput` functions create the input widgets
+ - You can also embed Shiny components directly within HTML presentations
+ - It is also possible to embed an entire shiny application within an R Markdown document using the `shinyAppDir` function
+
+## Example R Markdown Doc with Embed shiny App
+
+ - In IDE - go to 'File', then 'New File' and 'R Markdown'
+ - Then select 'Shiny' on the left and name the document
+ - Click Ok
+ - This is now an [interactive document](http://rmarkdown.rstudio.com/authoring_shiny.html)- an R Markdown file that contains Shiny components and can be an app or used within a report
+ 
+## R Markdown Websites
+
+ - [Site](http://rmarkdown.rstudio.com/rmarkdown_websites.html)
+ - 5_RMD_Immunogenicity_Website
+ - Use rmarkdown::render_site()
+ - [Example](https://beta.rstudioconnect.com/content/2770/)
+ 
+## Blogdown
+
+ - Create websites using R Markdown and Hugo
+ - [Site](https://bookdown.org/yihui/blogdown/installation.html)
+ - 5_RMD_Blogdown
+ - install blogdown
+ - blogdown::install_hugo()
+ - blogdown::new_site()
+ - blogdown::serve_site()
+ - RStudio Connect Tip
+- [Example](https://beta.rstudioconnect.com/content/2972/)
+ 
+## Bookdown
+
+ - https://bookdown.org/yihui/bookdown
+ - 6_RMD_Immunogenicity_Bookdown
+ - In Build - click Build Book
+ - https://beta.rstudioconnect.com/content/2899/
+
+# Part 3 HTML Widgets
+
+## Live HTML Widgets Examples
+
+<div class="columns-2">
+- [Institute for Quantitative Social Science - statistical analysis of genomic data for antibiotic resistant strains of mycobacterium tuberculosis by Amanda Winburn and others](https://hmdc.shinyapps.io/genTB/)
+- [Best & Worst California Hospitals for Surgery by Gary Chung
+](https://gchung.shinyapps.io/CAhospitals/)
+- [canvasXpress - developed as the core visualization component for bioinformatics and systems biology analysis at Bristol-Myers Squibb by Isaac Neuhaus
+](http://canvasxpress.org/)
+- [Visualizing U.S. Clinical Trials
+](https://gchung.shinyapps.io/CTgov/)
+
+<div class="img-col">![rmarkdown](htmlwidgets4.png)
+ </div>
+
+</div>
+
+## HTML Widgets R Bindings to JavaScript Libraries
+
+<div class="columns-2">
+
+- Used at the R console for data analysis just like conventional R plots (via RStudio Viewer).
+- Seamlessly embedded within R Markdown documents and Shiny web applications.
+- Saved as standalone web pages for ad-hoc sharing via email, Dropbox, etc.
+
+<div class="img-col"><a href="http://www.htmlwidgets.org/showcase_leaflet.html">![htmlwidgets1](htmlwidgets1.png)</a>
+ </div>
+ 
+</div>
+
+## HTML Widgets &mdash; Leaflet Example - 1_htmlwidgets_Leaflet_Starbucks
+
+<div class="columns-2">
+<a href="http://www.htmlwidgets.org/index.html">![htmlwidgets2](htmlwidgets2.png)</a>
+
+- Leaflet Example 
+- Viewing Starbucks Locations Near the pharmaSUG Baltimore Conference
+- Loads a Data Set
+
+</div>
+
+## HTML Widgets &mdash; Leaflet Example - 2_htmlwidgets_Shiny_Leaflet_Starbucks
+
+<div class="columns-2">
+<a href="http://www.htmlwidgets.org/index.html">![htmlwidgets2](htmlwidgets2.png)</a>
+
+- How would you add Shiny to it?
+- Find Starbuck locations for your hometown...
+
+</div>
+
+## What Shiny functions are being used below?
+```{r, echo=FALSE}
+library(d3scatter)
+library(crosstalk)
+
+shared_ToothGrowth <- SharedData$new(ToothGrowth)
+bscols(widths = c(3,NA,NA),
+  list(
+    filter_checkbox("supp", "supp", shared_ToothGrowth, ~supp, inline = TRUE),
+    filter_slider("dose", "dose", shared_ToothGrowth, ~dose, width = "100%")
+  ),
+  d3scatter(shared_ToothGrowth, ~dose, ~len, ~factor(supp), width="100%", height=250),
+  d3scatter(shared_ToothGrowth, ~len, ~dose, ~factor(supp), width="100%", height=250)
+)
+```
+
+## None - It's Crosstalk
+
+<div class="columns-2">
+- http://rstudio.github.io/crosstalk/index.html
+- Crosstalk is an add-on to the htmlwidgets package
+- It extends htmlwidgets with a set of classes, functions, and conventions for implementing cross-widget interactions (currently, linked brushing and filtering)
+- Crosstalk doesn’t require the use of Shiny
+- On the other hand, you can use Crosstalk and Shiny together to broaden the capabilities of each
+
+
+</div>
+
+## Crosstalk Examples
+
+<div class="columns-2">
+- 1_htmlwidgets_crosstalk_ToothGrowth
+- 2_htmlwidgets_crosstalk_Shiny_ToothGrowth
+
+</div>
+
+## Common Reporting Tasks - rpivotTable & DT
+
+<div class="columns-2">
+- [rpivotTable - Package created by Enzo Martoglio](https://github.com/smartinsightsfromdata/rpivotTable)
+- [DT: An R interface to the DataTables library by RStudio](https://rstudio.github.io/DT/)
+
+<div class="img-col"><a href="http://hafen.github.io/htmlwidgetsgallery/"></a>
+   ![rpivottable](rpivottable.png)
+ </div>
+</div>
+
+</div>
+
+## Common Reporting Tasks - ggplot2
+
+<div class="columns-2">
+- [Plotting system for R](https://rpubs.com/hadley/ggplot2-toolbox)
+- [Created by Hadley Wickham](http://ggplot2.org/)
+- [Powerful graphics language for creating elegant and complex plots](http://www.cookbook-r.com/Graphs/)
+- [ggplot2 is a graphing library for R. Use ggplot2 with Plotly to create interactive, online ggplot2 charts with D3.js.](https://plot.ly/ggplot2/)
+- [ggvis is a data visualization package for R](http://ggvis.rstudio.com/)
+
+<div class="img-col">
+<a href="https://ramnathv.github.io/pycon2014-r/visualize/ggplot2.html">![ggplot2](ggplot2.png)</a>
+
+
+</div>
+
+# Part 4 APIs
+## API - Info
+
+<div class="columns-2">
+- APIs can solve issues when programmers use different programming languages
+- API(Application Program Interface) is a generic term and can really mean any interface an IT service promises to other services
+- RESTful APIs are HTTP APIs, the HTTP looks for two things: method and URL
+- Web page made a request to a web server with the GET method and the URL, web server knows how to interpret your HTTP request
+- Query some functions written in R from a Java or Python application, develop a client for your API in JavaScript and users can interact with your R functions from browser.
+
+</div>
+
+## Plumber - Info
+
+<div class="columns-2">
+
+- Plumber, converts your existing R code to a web API using a handful of special one-line comments.
+- Plumber allows you to create a REST API by merely decorating your existing R source code with special comments
+- Comments allow plumber to make your R functions available as API endpoints
+- When you plumb() a file, Plumber calls source() on that file which will evaluate any top-level code that you have defined
+- You can visit a URL using a browser or a terminal to run your R function and get results
+
+</div>
+
+## Plumber - Info/Demo
+
+<div class="columns-2">
+
+- Server Demo
+- https://beta.rstudioconnect.com/content/2975/__swagger__/
+- https://beta.rstudioconnect.com/content/2975/outcomes?drug=FUROSEMIDE
+- Endpoints are the terminal step in the process of serving a request. An endpoint can simply be viewed as the logic that is ultimately responsible for generating a response to a particular request. 
+- https://www.rplumber.io/
+- https://www.mango-solutions.com/blog/production-r-at-ons
+- https://blog.rstudio.com/2017/08/03/rstudio-connect-v1-5-4-plumber/
+</div>
+
+# Part 5 Applications in Drug Development
+
+## Platforms & Tools
+- [mrgsolve facilitates simulation in R from hierarchical, ordinary differential equation (ODE)-based models typically employed in drug development](https://www.metrumrg.com/try-open-source-tools/)
+- [Shares information about ITN's clinical studies and specimen bio-repository](https://www.itntrialshare.org/)
+- [Bio3D-web is a new online application for the user friendly investigation of protein structure ensembles](http://129.177.232.111:3848/pca-app/?SSUID=2017-07-20_369c3a8b40e0)
+- [Software, databases and learning material maintained by bioinformatics platform members](http://bioinformatics.mdc-berlin.de/resources.html)
+- [Environment for medical and genomic research](https://www.synapse.org/)
+
+## Applications in Research - Github
+- https://github.com/rstudio/shiny_example
+- https://shiny.rstudio.com/articles/deployment-local.html
+- https://github.com/crtahlin/medplot
+- runGitHub("medplot", "crtahlin", subdir = "inst/shinyapp_symptoms2")
+- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4383594/
+- library(medplot) medplotOnline()
+- https://github.com/xtmgah/DDCV
+- https://arxiv.org/pdf/1404.0734.pdf
+
+## Applications in Research - Modeling
+- https://www.ncbi.nlm.nih.gov/pubmed/25733352
+
+## Applications in Research - Teaching
+- [Web Application Teaching Tools for Statistics Using R and Shiny](http://escholarship.org/uc/item/00d4q8cp)
+
+
+## Pharmacokinetics
+
+ - [Interactive Pharmacometric Applications Using R and the Shiny Package](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394611/)
+ - [Simple example of modeling and postprocessing a bayesian dataset with nonmem](http://devinpastoor.com/simplest_bayes/bayesian-analysis.html)
+- [Bioequivalence v0.3 by Andrey Ogurtsov](https://statist.shinyapps.io/bioeq_en/)
+- [Pharmacometrics: some Shiny applications](http://webpopix.org/shiny/ShinyExamples.html)
+ - [Glucose Insulin Dynamics and SGLT 1/2 inhibition](http://qsp.engr.uga.edu:3838/GluIns/GluIns1.d/)
+- [drinkR: Estimate your Blood Alcohol Concentration (BAC](https://rasmusab.shinyapps.io/drinkr/)
+
+## Clinical Trials
+
+- [interAdapt - An Interactive Planner for Group Sequential, Adaptive Enrichment Designs](https://michaelrosenblum.shinyapps.io/interAdapt/) & [here](http://arxiv.org/pdf/1404.0734.pdf)
+ - [AplusB: A + B design investigator for phase I dose-escalation studies](https://graham-wheeler.shinyapps.io/AplusB/)
+ - [medplot by Crt Ahlin & Lara Lusa to  facilitate the exploration and analysis of longitudinal data](http://shiny.mf.uni-lj.si/medplot/)
+  - [Application to visualize meta-analysis as physical weights on scales](https://chjackson.shinyapps.io/MetaAnalyser/)
+  - [BioPET is a tool for helping investigators evaluate whether a biomarker or risk model is useful for prognostic enrichment of a clinical trial](https://jhroth.shinyapps.io/WebApp/)
+  
+## Clinical Trials Cont.
+  
+  - [gsDesign R package for deriving and describing group sequential designs trials by Keaven Anderson](https://cran.r-project.org/web/packages/gsDesign/index.html) & [here](https://www.youtube.com/watch?v=CJoHdbF2wE4)
+  - [List of R Shiny Applications](https://brpnci.shinyapps.io/main/)
+ - https://brbnci.shinyapps.io/BasketTrials/
+ - https://github.com/brbnci/BasketTrials
+ - https://rgulati.shinyapps.io/calculator/
+- http://schedule.user2016.org/event/7BXX/mavis-meta-analysis-via-shiny
+- http://kylehamilton.net/shiny/MAVIS/
+- https://aurora.shinyapps.io/random_gen/
+- https://cran.r-project.org/web/views/ClinicalTrials.html
+ 
+ 
+## Genomics & Proteomics
+
+  - [Human eyeIntegration web app](https://eyeintegration.nei.nih.gov/)
+  - [Gene Expression Biclustering - Bryan Lewis](https://jjallaire.shinyapps.io/shiny-biclust/)
+  - [Visualize and explore an entire genome](https://gallery.shinyapps.io/genome_browser/)
+  - [Use phenotypes and genotypes to detect novel disease gene candidates ](http://omimexplorer.research.bcm.edu:3838/omim_explorer/)
+  - [Visualisation of proteomics data using R and Bioconductor](https://www.bioconductor.org/packages/release/data/experiment/vignettes/RforProteomics/inst/doc/RProtVis.html)
+
+## Immunogenicity & Adverse Advents
+
+ - [Immunogenicity Assessments](http://www.ncbi.nlm.nih.gov/pubmed/25733352) 
+ - [shiny Applications with openFDA Data](http://www.gersonides.com/openfda/)
+ - [Repository of shiny apps that use the openfda API](https://github.com/jonathanglevine/openfdashinyapps)
+ - [ropenhealth/openfda](https://github.com/rOpenHealth/openfda) & [adverse events analysis by Fisseha Berhane](http://datascienceplus.com/working-with-databases-in-r/)
+ - [Adverse Events Reports](https://openfda.shinyapps.io/dash/?t1=aspirin&v1=patient.drug.openfda.generic_name)
+ - [Adverse Event Dashboard](https://diabetescheck.shinyapps.io/openfda-dashboard/)
+
+## Disease/Epidemioogy
+
+ - [CDC Weekly Case Count](https://gallery.shinyapps.io/CDCPlot/)
+ - [Ebola Model](https://gallery.shinyapps.io/Ebola-Dynamic/)
+ - [Influenza types from global surveillance isolates](https://pmacp.shinyapps.io/Influenza_isolates/)
+ - [Impact of HIV Pre-Exposure Prophylaxis among MSM in the United States](https://prism.shinyapps.io/cdc-prep-guidelines/)
+ - [Bacterial Growth Curve Analysis](https://mdphan.shinyapps.io/GrowthCurvesAnalysis/)
+ - [CDC Zika Data](https://chendaniely.shinyapps.io/zika_cdc_dashboard/)
+ - [Health & economic impact, achieving the WHO targets
+for control and elimination of London Declaration NTDs](https://erasmusmcmgz.shinyapps.io/dissemination/)
+
+## Hospital/Medicine
+
+ - [Shiny in Medicine](https://rviews.rstudio.com/2017/05/03/shiny-in-medicine/)
+ - [Health Equity Assessment Toolkit ](https://whoequity.shinyapps.io/HEAT/)
+ - [Emergency Department Simulation](https://gallery.shinyapps.io/EDsimulation/)
+ - [Colorectal Cancer - 10 year Predicted Risk Online](http://riskcalc.org/ColorectalCancer/)
+ - [US Hospitals Ranking Shiny App](http://datascience-enthusiast.com/R/Hospital_Rankings.html)
+- [Access to Hospital Care Dashboard](http://colorado.rstudio.com:3939/content/188/)
+- [Hospital Infections ](https://hospinf.shinyapps.io/hospinf/)
+- [Comparing Scores from Different Patient Reported Outcomes using Item Response Theory ](http://www.common-metrics.org/app.php)
+- [Advanced analysis of your DNA](http://www.impute.me/)
+- [2014 WHO Growth Charts for Canada, 2-19 years](http://apps.cpeg-gcep.net/growth219_DDE/)
+
+## Report Generation & Automation for Clinical Research
+
+ - [Shiny package](http://shiny.rstudio.com/) & [Shiny Server](https://www.rstudio.com/products/shiny/download-server/)
+ - [R Markdown](http://rmarkdown.rstudio.com/)
+ - [Sweave and knitr...](https://support.rstudio.com/hc/en-us/articles/200552056-Using-Sweave-and-knitr) [knitr is an engine for dynamic report generation with R. It enables integration of R code into LaTeX, LyX, HTML, Markdown, AsciiDoc, & reStructuredText documents. ](https://cran.r-project.org/web/packages/knitr/index.html)
+  - [LaTex Directions to use Sweave and knitr to create PDF reports.](http://www.latex-project.org/get/)
+  - [The RTF package, a set of R functions to output Rich Text Format RTF files with high resolution tables & graphics.](https://cran.r-project.org/web/packages/rtf/rtf.pdf)
+ - [ReporteRs by David Gohel: Microsoft Word, Microsoft PowerPoint & HTML Documents Generation from R](https://cran.r-project.org/web/packages/ReporteRs/index.html)[formerly R2DOCX package](http://davidgohel.github.io/R2DOCX/index.html)
+
+## Report Generation & Automation for Clinical Research Cont.
+
+ - [CRAN Task View: Reproducible Research](https://cran.r-project.org/web/views/ReproducibleResearch.html)
+ - [xtable: Export Tables to LaTeX or HTML](https://cran.r-project.org/web/packages/xtable/index.html)
+ - [DT: An R interface to the DataTables library](http://rstudio.github.io/DT/)
+  - [R Markdown Document Templates - re-usable document templates](http://rmarkdown.rstudio.com/developer_document_templates.html)
+
+## Clinical Research
+  - [Using R in a regulatory environment: FDA experiences](https://www.youtube.com/watch?v=2MqVklf2sBU)
+  - [LRT Signal Analysis for a Drug](https://openfda.shinyapps.io/LRTest/)
+  - [Unfulfilled? Potential of R in Clinical Research](https://berlinrug.github.io/BerlinRUG/20151029/unfulfilled-potential-of-r-in-clinical-research/Parsadanyan_R%20in%20Clinical%20Research_fixed.pdf)
+  - [Leveraging	R	and	Shiny	for	Point	and	Click	ADaM	Analysis](http://www.phusewiki.org/docs/Conference%202014%20CS%20Presentations/CS05.pdf)
+  - [Dynamic Display of Patient Profiles](http://www.phusewiki.org/docs/CSS2015Presentations/PP26FINAL.pdf)
+  - [Empowering Users By Creating Data Visualization Applications In R/Shiny](http://www.pharmasug.org/proceedings/2016/DG/PharmaSUG-2016-DG10.pdf)
+  - [Addition of R Programming in Clinical Domain](http://www.iasct.net/z_uploads/papers/48_Addition%20of%20R%20Programming%20in%20Clinical%20Domain.pdf)
+  
+## Other
+ - [Bayesian inference](https://r.amherst.edu/apps/nhorton/Shiny-Bayes/)
+ - [PeLiCa - The Peptide Library Calculator](http://www.pelica.org/)
+ - [Survival Analysis (SASR)](https://jzliu.shinyapps.io/SASR/)
+ - [MAVIS - meta-analysis](http://kylehamilton.net/shiny/MAVIS/)
+ - [A social network for clinical trial designers, under development](https://github.com/professorbeautiful/CTDesignExperimenter)
+ - [Ebola Model](https://gallery.shinyapps.io/Ebola-Dynamic/)
+ - [CDC Data Visualization](https://gallery.shinyapps.io/CDCPlot/)
+ - [Using R for Biomedical Statistics booklet](http://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/)
+
+## Other
+ 
+ - [Randomization table for clinical trials](https://aurora.shinyapps.io/random_gen/)
+ - [Plot Your Data](https://pharmacometrics.shinyapps.io/ggplotmydata/ggplotwithyourdata.Rmd)
+ - [Ibuprofen Dosing Regimens ](https://acp-unisa.shinyapps.io/Ibuprofen/)
+ - [Analyze Data on Socrata using CSV Open Data APIs](https://marks-skram.shinyapps.io/shiny_socrata/)
+ </div>
+- [MARS, Meta-Analysis, for 'modeling visualization' in Pharmacometrics](https://jzliu.shinyapps.io/MARS/)
+- [Information on R in clinical research by Adrian Olszewski](http://www.r-clinical-research.com/)
+- [Documents for the use of both RStudio IDE and Shiny Server Pro commercial products in regulated clinical trial environments here](https://www.rstudio.com/about/)
+
+## Q/A...
+
+<div class="columns-4">![yoda4](yoda4.png)</a>
+
+</div>
+
+## Additional Resources
+
+ - Shiny Developer Center - http://shiny.rstudio.com
+ - [Stack Overflow - "shiny" tag](http://stackoverflow.com/questions/tagged/shiny)
+ - ["Shiny Discuss" Mailing List](https://groups.google.com/d/forum/shiny-discuss)
+ - ***Come meet us!***
+ 
+## Come see us at the RStudio Conference...
+
+- https://www.rstudio.com/conference/
+- San Diego January 31 to Feb 3
+
+<div class="columns-4">![jerry](jerry.png)</a>
+
+</div>
