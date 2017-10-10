@@ -50,6 +50,19 @@ IMMUNOGENICITY Book Tech Document:
 
 https://beta.rstudioconnect.com/content/2899/
 
+IMMUNOGENICITY Blog blogdown website:
+
+https://beta.rstudioconnect.com/content/2972/
+
+Live Plumber API for the OpenFDA API:
+
+https://beta.rstudioconnect.com/content/2975/outcomes?drug=FUROSEMIDE
+*Try PREDNISONE at the end of the link
+
+https://beta.rstudioconnect.com/content/2975/__swagger__/
+
+Click GET, Try it Out, then enter PREDNISONE and then hit Execute. Details show top 10 adverse events in the Response body blow.
+
 Presentations and code from workshop.
 
 Requires the following packages from CRAN:
